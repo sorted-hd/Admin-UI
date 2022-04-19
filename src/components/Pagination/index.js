@@ -6,12 +6,26 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import config from '../../config';
 import styles from './Pagination.module.css';
 
-const Pagination = ({ userDetails, rowLimit }) => {
+const Pagination = ({
+    userDetails,
+    rowLimit,
+    onEdit,
+    onDelete,
+    onSelect,
+    onSelectAll,
+}) => {
     const [noOfPages, setNoOfPages] = useState(1);
     const [pageLimit, setPageLimit] = useState(1);
     const [currentPageIndex, setCurrentPageIndex] = useState(1);
     useEffect(() => {
-        let calcPages = Math.round(userDetails.length / rowLimit);
+        let detailSize = userDetails.reduce((total, user) => {
+            if (user.visible && !user.deleted) {
+                return (total += 1);
+            }
+            return total;
+        }, 0);
+        let calcPages = Math.ceil(detailSize / rowLimit);
+        console.log(calcPages);
         setNoOfPages(calcPages);
         if (calcPages <= config.PAGE_LIMIT) {
             if (calcPages <= 0) calcPages = 1;
@@ -39,7 +53,7 @@ const Pagination = ({ userDetails, rowLimit }) => {
     };
 
     const getItemsPerPage = () => {
-        let nData = [...userDetails];
+        let nData = userDetails.filter((user) => user.visible && !user.deleted);
         const startIndex = currentPageIndex * rowLimit - rowLimit;
         return nData.splice(startIndex, rowLimit);
     };
@@ -63,7 +77,11 @@ const Pagination = ({ userDetails, rowLimit }) => {
                 <thead>
                     <tr>
                         <th>
-                            <input type="checkbox" />
+                            <input
+                                type="checkbox"
+                                name="selectAll"
+                                onChange={onSelectAll}
+                            />
                         </th>
                         <th>Name</th>
                         <th>Email</th>
@@ -72,29 +90,50 @@ const Pagination = ({ userDetails, rowLimit }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {getItemsPerPage().map((user, idx) => (
-                        <tr key={idx}>
-                            <td>
-                                <input type="checkbox" />
-                            </td>
-                            <td>{user.name}</td>
-                            <td>{user.email}</td>
-                            <td>{user.role}</td>
-                            <td>
-                                <>
-                                    <FontAwesomeIcon icon={faEdit} />
-                                    <FontAwesomeIcon
-                                        icon={faTrash}
-                                        color="red"
-                                    />
-                                </>
-                            </td>
-                        </tr>
-                    ))}
+                    {getItemsPerPage().map((user, idx) => {
+                        if (user.visible && !user.deleted) {
+                            return (
+                                <tr key={idx}>
+                                    <td>
+                                        <input
+                                            type="checkbox"
+                                            name={user.name}
+                                            onChange={onSelect}
+                                        />
+                                    </td>
+                                    <td>{user.name}</td>
+                                    <td>{user.email}</td>
+                                    <td>{user.role}</td>
+                                    <td>
+                                        <>
+                                            <FontAwesomeIcon
+                                                icon={faEdit}
+                                                style={{ marginRight: '2rem' }}
+                                                onClick={onEdit}
+                                            />
+                                            <FontAwesomeIcon
+                                                icon={faTrash}
+                                                color="red"
+                                                onClick={onDelete.bind(
+                                                    null,
+                                                    user.id
+                                                )}
+                                            />
+                                        </>
+                                    </td>
+                                </tr>
+                            );
+                        } else {
+                            return false;
+                        }
+                    })}
                 </tbody>
             </table>
 
             <div className={styles.actionBtn}>
+                <button className={styles.actionBtn__delete}>
+                    <span>Delete Selected</span>
+                </button>
                 <CircularButton
                     content={`${String.fromCharCode(60)}${String.fromCharCode(
                         60

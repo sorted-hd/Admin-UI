@@ -11,7 +11,6 @@ import config from './config';
 function App() {
     const [error, setError] = useState({});
     const [userDetails, setUserDetails] = useState([]);
-    const [searchResult, setSearchResult] = useState([]);
 
     useEffect(() => {
         dataApiCall();
@@ -26,8 +25,12 @@ function App() {
                     'Something happened while making a network call'
                 );
             }
+            responseReceived.data = responseReceived.data.map((el) => ({
+                ...el,
+                visible: true,
+                deleted: false,
+            }));
             setUserDetails(responseReceived.data);
-            setSearchResult(responseReceived.data);
         } catch (error) {
             const statusCode = error.response.status
                 ? error.response.status
@@ -37,16 +40,36 @@ function App() {
     };
 
     const onSearch = (event) => {
-        const searchText = event.target.value;
+        const searchText = event.target.value.toLowerCase();
         const nData = [...userDetails];
-        const nUserDetails = nData.filter((data) => {
-            if (data.name.toLowerCase().includes(searchText.toLowerCase())) {
-                return true;
+        const nUserDetails = nData.map((data) => {
+            if (
+                data.name.toLowerCase().includes(searchText) ||
+                data.role.toLowerCase().includes(searchText) ||
+                data.email.toLowerCase().includes(searchText)
+            ) {
+                return { ...data, visible: true };
+            } else {
+                return { ...data, visible: false };
             }
-            return false;
         });
-        setSearchResult(nUserDetails);
+        console.log(nUserDetails);
+        setUserDetails(nUserDetails);
     };
+
+    const handleDelete = (id) => {
+        const nData = [...userDetails];
+        const nUserDetails = nData.map((data) => {
+            if (data.id === id) {
+                return { ...data, deleted: true };
+            }
+            return data;
+        });
+        setUserDetails(nUserDetails);
+    };
+
+    const handleSelect = () => {};
+    const handleSelectAll = () => {};
 
     return (
         <div className="App">
@@ -57,8 +80,11 @@ function App() {
             />
             {userDetails.length !== 0 && (
                 <Pagination
-                    userDetails={searchResult}
+                    userDetails={userDetails}
                     rowLimit={config.ROW_LIMIT}
+                    onDelete={handleDelete}
+                    onSelect={handleSelect}
+                    onSelectAll={handleSelectAll}
                 />
             )}
         </div>

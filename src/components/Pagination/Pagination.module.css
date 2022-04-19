@@ -6,9 +6,24 @@
 }
 
 .actionBtn {
+    position: relative;
+    width: 100%;
     margin-top: 1rem;
     display: flex;
     justify-content: center;
+    flex-wrap: nowrap;
+}
+
+.actionBtn__delete {
+    position: absolute;
+    width: 150px;
+    height: 35px;
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    left: 0;
 }
 
 table {
