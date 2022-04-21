@@ -122,6 +122,21 @@ function App() {
         setUserDetails(nUserDetails);
     };
 
+    const handleValueEdit = (userIdx, editedValues) => {
+        const nUserDetails = [...userDetails];
+        if (editedValues['name']) {
+            nUserDetails[userIdx].name = editedValues.name;
+        }
+        if (editedValues['email']) {
+            nUserDetails[userIdx].email = editedValues.email;
+        }
+        if (editedValues['role']) {
+            nUserDetails[userIdx].role = editedValues.role;
+        }
+        nUserDetails[userIdx].edit = false;
+        setUserDetails(nUserDetails);
+    };
+
     return (
         <div className="App">
             <h1>{error.message}</h1>
@@ -138,6 +153,7 @@ function App() {
                     onSelectAll={handleSelectAll}
                     onBunchDelete={handleBunchDelete}
                     onEdit={handleEdit}
+                    onEditValues={handleValueEdit}
                 />
             )}
         </div>

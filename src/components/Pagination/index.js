@@ -14,10 +14,12 @@ const Pagination = ({
     onSelect,
     onSelectAll,
     onBunchDelete,
+    onEditValues,
 }) => {
     const [noOfPages, setNoOfPages] = useState(1);
     const [pageLimit, setPageLimit] = useState(1);
     const [currentPageIndex, setCurrentPageIndex] = useState(1);
+    const [editedUserValues, setEditedUserValues] = useState({});
 
     useEffect(() => {
         let detailSize = userDetails.reduce((total, user) => {
@@ -119,19 +121,40 @@ const Pagination = ({
                                             <td>
                                                 <input
                                                     type="text"
-                                                    value={user.name}
+                                                    defaultValue={user.name}
+                                                    onChange={(e) =>
+                                                        setEditedUserValues({
+                                                            ...editedUserValues,
+                                                            name: e.target
+                                                                .value,
+                                                        })
+                                                    }
                                                 />
                                             </td>
                                             <td>
                                                 <input
                                                     type="text"
-                                                    value={user.email}
+                                                    defaultValue={user.email}
+                                                    onChange={(e) =>
+                                                        setEditedUserValues({
+                                                            ...editedUserValues,
+                                                            email: e.target
+                                                                .value,
+                                                        })
+                                                    }
                                                 />
                                             </td>
                                             <td>
                                                 <input
                                                     type="text"
-                                                    value={user.role}
+                                                    defaultValue={user.role}
+                                                    onChange={(e) =>
+                                                        setEditedUserValues({
+                                                            ...editedUserValues,
+                                                            role: e.target
+                                                                .value,
+                                                        })
+                                                    }
                                                 />
                                             </td>
                                         </>
@@ -153,7 +176,11 @@ const Pagination = ({
                                                 )}
                                                 isDisabled={false}
                                                 isSelected={false}
-                                                onClick={getToFirstPage}
+                                                onClick={onEditValues.bind(
+                                                    null,
+                                                    idx,
+                                                    editedUserValues
+                                                )}
                                             />
                                         </td>
                                     )}

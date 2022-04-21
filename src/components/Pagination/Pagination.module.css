@@ -36,6 +36,11 @@ table {
     border-collapse: collapse;
 }
 
+table input {
+    width: 100%;
+    transition: width 400ms ease-out;
+}
+
 td,
 th {
     padding: 1rem;
