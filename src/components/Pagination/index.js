@@ -37,7 +37,7 @@ const Pagination = ({
             return;
         }
         setPageLimit(config.PAGE_LIMIT);
-    }, [rowLimit, userDetails]);
+    }, [rowLimit, userDetails, pageLimit]);
 
     const getToFirstPage = () => {
         setCurrentPageIndex(1);
@@ -111,7 +111,7 @@ const Pagination = ({
                                             type="checkbox"
                                             name={user.name}
                                             onChange={(event) =>
-                                                onSelect(event, idx)
+                                                onSelect(event, user)
                                             }
                                             checked={user.checked}
                                         />
@@ -178,7 +178,7 @@ const Pagination = ({
                                                 isSelected={false}
                                                 onClick={onEditValues.bind(
                                                     null,
-                                                    idx,
+                                                    user,
                                                     editedUserValues
                                                 )}
                                             />
@@ -194,7 +194,7 @@ const Pagination = ({
                                                     }}
                                                     onClick={onEdit.bind(
                                                         null,
-                                                        idx
+                                                        user
                                                     )}
                                                 />
                                                 <FontAwesomeIcon
@@ -202,7 +202,7 @@ const Pagination = ({
                                                     color="red"
                                                     onClick={onDelete.bind(
                                                         null,
-                                                        user.id
+                                                        user
                                                     )}
                                                 />
                                             </>

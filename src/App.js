@@ -83,9 +83,10 @@ function App() {
         setUserDetails(nUserDetails);
     };
 
-    const handleSelect = (event, userIdx) => {
+    const handleSelect = (event, user) => {
         const curr = event.target;
         const nUserDetails = [...userDetails];
+        const userIdx = nUserDetails.indexOf(user);
         if (curr.checked) {
             nUserDetails[userIdx].checked = true;
         } else {
@@ -116,14 +117,16 @@ function App() {
         setUserDetails(nUserDetails);
     };
 
-    const handleEdit = (userIdx) => {
+    const handleEdit = (user) => {
         const nUserDetails = [...userDetails];
+        const userIdx = nUserDetails.indexOf(user);
         nUserDetails[userIdx].edit = true;
         setUserDetails(nUserDetails);
     };
 
-    const handleValueEdit = (userIdx, editedValues) => {
+    const handleValueEdit = (user, editedValues) => {
         const nUserDetails = [...userDetails];
+        const userIdx = nUserDetails.indexOf(user);
         if (editedValues['name']) {
             nUserDetails[userIdx].name = editedValues.name;
         }
