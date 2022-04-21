@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { CircularButton } from '../UI';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Search from '../Search';
 import config from '../../config';
 import styles from './Pagination.module.css';
 
@@ -15,11 +16,13 @@ const Pagination = ({
     onSelectAll,
     onBunchDelete,
     onEditValues,
+    onSearch,
 }) => {
     const [noOfPages, setNoOfPages] = useState(1);
     const [pageLimit, setPageLimit] = useState(1);
     const [currentPageIndex, setCurrentPageIndex] = useState(1);
     const [editedUserValues, setEditedUserValues] = useState({});
+    const [allChecked, setAllChecked] = useState(false);
 
     useEffect(() => {
         let detailSize = userDetails.reduce((total, user) => {
@@ -29,7 +32,6 @@ const Pagination = ({
             return total;
         }, 0);
         let calcPages = Math.ceil(detailSize / rowLimit);
-        console.log(calcPages);
         setNoOfPages(calcPages);
         if (calcPages <= config.PAGE_LIMIT) {
             if (calcPages <= 0) calcPages = 1;
@@ -37,7 +39,9 @@ const Pagination = ({
             return;
         }
         setPageLimit(config.PAGE_LIMIT);
-    }, [rowLimit, userDetails, pageLimit]);
+    }, [rowLimit, userDetails]);
+
+    useEffect(() => {}, [allChecked]);
 
     const getToFirstPage = () => {
         setCurrentPageIndex(1);
@@ -68,14 +72,27 @@ const Pagination = ({
         return flag;
     };
 
-    const getPaginationCluster = () => {
-        const startingValue =
-            Math.floor((currentPageIndex - 1) / pageLimit) * pageLimit;
+    const getAllSelectedFlag = () => {
+        const usersVisible = getItemsPerPage();
+        let flag = usersVisible.every((user) => user.checked);
+        return flag;
+    };
 
+    const getPaginationCluster = () => {
+        let startingValue =
+            Math.floor((currentPageIndex - 1) / pageLimit) * pageLimit;
         const paginationCluster = [];
+
         for (let idx = 0; idx < pageLimit; idx++) {
             let value = idx + startingValue + 1;
             paginationCluster.push(value);
+        }
+
+        if (paginationCluster.at(0) > noOfPages) {
+            if (startingValue <= 0) {
+                return paginationCluster;
+            }
+            setCurrentPageIndex(startingValue);
         }
 
         return paginationCluster;
@@ -83,6 +100,10 @@ const Pagination = ({
 
     return (
         <div className={styles.paginationContainer}>
+            <Search
+                placeholder="Search by name, email or role"
+                onChange={onSearch}
+            />
             <table>
                 <thead>
                     <tr>
@@ -90,9 +111,13 @@ const Pagination = ({
                             <input
                                 type="checkbox"
                                 name="selectAll"
-                                onChange={(event) =>
-                                    onSelectAll(event, getItemsPerPage())
-                                }
+                                checked={getAllSelectedFlag()}
+                                style={{
+                                    cursor: 'pointer',
+                                }}
+                                onChange={(event) => {
+                                    onSelectAll(event, getItemsPerPage());
+                                }}
                             />
                         </th>
                         <th>Name</th>
@@ -110,6 +135,9 @@ const Pagination = ({
                                         <input
                                             type="checkbox"
                                             name={user.name}
+                                            style={{
+                                                cursor: 'pointer',
+                                            }}
                                             onChange={(event) =>
                                                 onSelect(event, user)
                                             }
@@ -133,7 +161,7 @@ const Pagination = ({
                                             </td>
                                             <td>
                                                 <input
-                                                    type="text"
+                                                    type="email"
                                                     defaultValue={user.email}
                                                     onChange={(e) =>
                                                         setEditedUserValues({
@@ -191,6 +219,7 @@ const Pagination = ({
                                                     icon={faEdit}
                                                     style={{
                                                         marginRight: '2rem',
+                                                        cursor: 'pointer',
                                                     }}
                                                     onClick={onEdit.bind(
                                                         null,
@@ -200,9 +229,12 @@ const Pagination = ({
                                                 <FontAwesomeIcon
                                                     icon={faTrash}
                                                     color="red"
+                                                    style={{
+                                                        cursor: 'pointer',
+                                                    }}
                                                     onClick={onDelete.bind(
                                                         null,
-                                                        user
+                                                        user.id
                                                     )}
                                                 />
                                             </>

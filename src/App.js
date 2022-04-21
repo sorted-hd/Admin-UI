@@ -3,7 +3,6 @@ import './App.css';
 import { useEffect, useState } from 'react';
 
 import Pagination from './components/Pagination';
-import Search from './components/Search';
 import { StatusCodes } from 'http-status-codes';
 import axios from 'axios';
 import config from './config';
@@ -55,7 +54,6 @@ function App() {
                 return { ...data, visible: false };
             }
         });
-        console.log(nUserDetails);
         setUserDetails(nUserDetails);
     };
 
@@ -95,6 +93,7 @@ function App() {
         setUserDetails(nUserDetails);
     };
     const handleSelectAll = (event, items) => {
+        // event.preventDefault();
         const curr = event.target;
         const nUserDetails = [...userDetails];
         if (curr.checked) {
@@ -143,10 +142,6 @@ function App() {
     return (
         <div className="App">
             <h1>{error.message}</h1>
-            <Search
-                placeholder="Search by name, email or role"
-                onChange={onSearch}
-            />
             {userDetails.length !== 0 && (
                 <Pagination
                     userDetails={userDetails}
@@ -157,6 +152,7 @@ function App() {
                     onBunchDelete={handleBunchDelete}
                     onEdit={handleEdit}
                     onEditValues={handleValueEdit}
+                    onSearch={onSearch}
                 />
             )}
         </div>
