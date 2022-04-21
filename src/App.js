@@ -2,7 +2,7 @@ import './App.css';
 
 import { useEffect, useState } from 'react';
 
-import Pagination from './components/Pagination';
+import Dashboard from './components/Dashboard';
 import { StatusCodes } from 'http-status-codes';
 import axios from 'axios';
 import config from './config';
@@ -141,9 +141,9 @@ function App() {
 
     return (
         <div className="App">
-            <h1>{error.message}</h1>
+            {error.message && <h1>{error.message}</h1>}
             {userDetails.length !== 0 && (
-                <Pagination
+                <Dashboard
                     userDetails={userDetails}
                     rowLimit={config.ROW_LIMIT}
                     onDelete={handleDelete}
