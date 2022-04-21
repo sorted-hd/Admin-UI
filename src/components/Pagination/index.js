@@ -22,7 +22,6 @@ const Pagination = ({
     const [pageLimit, setPageLimit] = useState(1);
     const [currentPageIndex, setCurrentPageIndex] = useState(1);
     const [editedUserValues, setEditedUserValues] = useState({});
-    const [allChecked, setAllChecked] = useState(false);
 
     useEffect(() => {
         let detailSize = userDetails.reduce((total, user) => {
@@ -40,8 +39,6 @@ const Pagination = ({
         }
         setPageLimit(config.PAGE_LIMIT);
     }, [rowLimit, userDetails]);
-
-    useEffect(() => {}, [allChecked]);
 
     const getToFirstPage = () => {
         setCurrentPageIndex(1);
