@@ -29,6 +29,8 @@ function App() {
                 ...el,
                 visible: true,
                 deleted: false,
+                checked: false,
+                edit: false,
             }));
             setUserDetails(responseReceived.data);
         } catch (error) {
@@ -68,8 +70,57 @@ function App() {
         setUserDetails(nUserDetails);
     };
 
-    const handleSelect = () => {};
-    const handleSelectAll = () => {};
+    const handleBunchDelete = (items) => {
+        console.log(items);
+        const nUserDetails = [...userDetails];
+        nUserDetails.forEach((userDetail) => {
+            items.forEach((item) => {
+                if (item.id === userDetail.id && item.checked) {
+                    userDetail.deleted = true;
+                }
+            });
+        });
+        setUserDetails(nUserDetails);
+    };
+
+    const handleSelect = (event, userIdx) => {
+        const curr = event.target;
+        const nUserDetails = [...userDetails];
+        if (curr.checked) {
+            nUserDetails[userIdx].checked = true;
+        } else {
+            nUserDetails[userIdx].checked = false;
+        }
+        setUserDetails(nUserDetails);
+    };
+    const handleSelectAll = (event, items) => {
+        const curr = event.target;
+        const nUserDetails = [...userDetails];
+        if (curr.checked) {
+            nUserDetails.forEach((userDetail) => {
+                items.forEach((item) => {
+                    if (item.id === userDetail.id) {
+                        userDetail.checked = true;
+                    }
+                });
+            });
+        } else {
+            nUserDetails.forEach((userDetail) => {
+                items.forEach((item) => {
+                    if (item.id === userDetail.id) {
+                        userDetail.checked = false;
+                    }
+                });
+            });
+        }
+        setUserDetails(nUserDetails);
+    };
+
+    const handleEdit = (userIdx) => {
+        const nUserDetails = [...userDetails];
+        nUserDetails[userIdx].edit = true;
+        setUserDetails(nUserDetails);
+    };
 
     return (
         <div className="App">
@@ -85,6 +136,8 @@ function App() {
                     onDelete={handleDelete}
                     onSelect={handleSelect}
                     onSelectAll={handleSelectAll}
+                    onBunchDelete={handleBunchDelete}
+                    onEdit={handleEdit}
                 />
             )}
         </div>

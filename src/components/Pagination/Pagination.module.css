@@ -26,6 +26,12 @@
     left: 0;
 }
 
+.actionBtn__delete:disabled {
+    border: 1px solid #7f8fa6;
+    color: #7f8fa6;
+    background-color: #dcdde1;
+}
+
 table {
     border-collapse: collapse;
 }
@@ -34,6 +40,7 @@ td,
 th {
     padding: 1rem;
     text-align: left;
+    vertical-align: middle;
 }
 
 tr:nth-child(odd),

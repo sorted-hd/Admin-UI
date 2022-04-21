@@ -13,10 +13,12 @@ const Pagination = ({
     onDelete,
     onSelect,
     onSelectAll,
+    onBunchDelete,
 }) => {
     const [noOfPages, setNoOfPages] = useState(1);
     const [pageLimit, setPageLimit] = useState(1);
     const [currentPageIndex, setCurrentPageIndex] = useState(1);
+
     useEffect(() => {
         let detailSize = userDetails.reduce((total, user) => {
             if (user.visible && !user.deleted) {
@@ -58,6 +60,12 @@ const Pagination = ({
         return nData.splice(startIndex, rowLimit);
     };
 
+    const getSelectedCount = () => {
+        const usersVisible = getItemsPerPage();
+        let flag = usersVisible.every((user) => !user.checked);
+        return flag;
+    };
+
     const getPaginationCluster = () => {
         const startingValue =
             Math.floor((currentPageIndex - 1) / pageLimit) * pageLimit;
@@ -80,7 +88,9 @@ const Pagination = ({
                             <input
                                 type="checkbox"
                                 name="selectAll"
-                                onChange={onSelectAll}
+                                onChange={(event) =>
+                                    onSelectAll(event, getItemsPerPage())
+                                }
                             />
                         </th>
                         <th>Name</th>
@@ -98,29 +108,79 @@ const Pagination = ({
                                         <input
                                             type="checkbox"
                                             name={user.name}
-                                            onChange={onSelect}
+                                            onChange={(event) =>
+                                                onSelect(event, idx)
+                                            }
+                                            checked={user.checked}
                                         />
                                     </td>
-                                    <td>{user.name}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.role}</td>
-                                    <td>
+                                    {user.edit && (
                                         <>
-                                            <FontAwesomeIcon
-                                                icon={faEdit}
-                                                style={{ marginRight: '2rem' }}
-                                                onClick={onEdit}
-                                            />
-                                            <FontAwesomeIcon
-                                                icon={faTrash}
-                                                color="red"
-                                                onClick={onDelete.bind(
-                                                    null,
-                                                    user.id
-                                                )}
-                                            />
+                                            <td>
+                                                <input
+                                                    type="text"
+                                                    value={user.name}
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="text"
+                                                    value={user.email}
+                                                />
+                                            </td>
+                                            <td>
+                                                <input
+                                                    type="text"
+                                                    value={user.role}
+                                                />
+                                            </td>
                                         </>
-                                    </td>
+                                    )}
+
+                                    {!user.edit && (
+                                        <>
+                                            <td>{user.name}</td>
+                                            <td>{user.email}</td>
+                                            <td>{user.role}</td>
+                                        </>
+                                    )}
+
+                                    {user.edit && (
+                                        <td>
+                                            <CircularButton
+                                                content={String.fromCharCode(
+                                                    10003
+                                                )}
+                                                isDisabled={false}
+                                                isSelected={false}
+                                                onClick={getToFirstPage}
+                                            />
+                                        </td>
+                                    )}
+                                    {!user.edit && (
+                                        <td>
+                                            <>
+                                                <FontAwesomeIcon
+                                                    icon={faEdit}
+                                                    style={{
+                                                        marginRight: '2rem',
+                                                    }}
+                                                    onClick={onEdit.bind(
+                                                        null,
+                                                        idx
+                                                    )}
+                                                />
+                                                <FontAwesomeIcon
+                                                    icon={faTrash}
+                                                    color="red"
+                                                    onClick={onDelete.bind(
+                                                        null,
+                                                        user.id
+                                                    )}
+                                                />
+                                            </>
+                                        </td>
+                                    )}
                                 </tr>
                             );
                         } else {
@@ -131,7 +191,11 @@ const Pagination = ({
             </table>
 
             <div className={styles.actionBtn}>
-                <button className={styles.actionBtn__delete}>
+                <button
+                    className={styles.actionBtn__delete}
+                    disabled={getSelectedCount()}
+                    onClick={onBunchDelete.bind(null, getItemsPerPage())}
+                >
                     <span>Delete Selected</span>
                 </button>
                 <CircularButton
